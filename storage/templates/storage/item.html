@@ -1,0 +1,48 @@
+
+
+{% load static %}
+ <div class="elm content border border-secondary rounded-3 d-flex align-items-center justify-content-center"
+          style="width:150px;height:150px;" id="{% url 'folders' item.hash %}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ item.name }}" data-value="{{item.is_dir}}">
+  <div class="row g-0">
+    <div class="content-overlay">
+    </div>
+    <div class="d-flex align-items-center justify-content-center mt-5">
+      <img src="{{img}}" alt="" style="width:80px;height:80px">
+    </div>
+    <div class="row mt-2 g-0">
+      <div class="col-3"></div>
+      <div class="col-md-6 ">
+        <div class="text-end me-2">
+          <p class="text-truncate" style="max-width: 150px;">{{ item.name }}</p>
+        </div>
+      </div>
+      <div class="col-md-3 ">
+        <div class="dropdown ms-3" id="menu"
+          style="border-width:0px!important; position: absolute;left:auto; right: auto; z-index:5000; ">
+          <a href="#" data-bs-display="static" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="border border-2 rounded-3" src="{% static 'images/3dots.png' %}" width="20" />
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+
+          {% if item.is_dir %}
+           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'folder_download' folder_hash=item.hash %}">Download</a></li>
+           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'folder_delete' folder_hash=item.hash %}">Delete</a></li>
+           <li> <button name="rename_button" id="rename_button" class="dropdown-item custom-dropdown-item" data-bs-toggle="modal" data-bs-target="#renameModel">Rename</button></li>
+
+          {% else %}
+            <li><a class="dropdown-item custom-dropdown-item" href="{% url 'file_download' file_hash=item.hash %}">Download</a><li/>
+            <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'file_delete' file_hash=item.hash %}">Delete</a></li>
+
+          {% endif %}
+          </ul>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+ </div>
+
+

@@ -1,0 +1,62 @@
+.content {
+  position: relative;
+  margin: auto;
+
+}
+
+.content .content-overlay {
+  background: rgba(144, 144, 144, 0.3);
+  position: absolute;
+  height: 99%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  -webkit-transition: all 0.2s ease-in-out 0s;
+  -moz-transition: all 0.2s ease-in-out 0s;
+  transition: all 0.2s ease-in-out 0s;
+}
+
+.elm:hover {
+  -webkit-transition: all 0.2s ease-in-out 0s;
+  -moz-transition: all 0.2s ease-in-out 0s;
+  transition: all 0.2s ease-in-out 0s;
+
+  --bs-border-width: 4px;
+  border-color: gray !important;
+
+}
+
+.elm {
+  --bs-border-width: 4px;
+  border-color: #E5E5E5 !important;
+
+}
+
+.invisible-input {
+  position: absolute;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  -moz-opacity: 0;
+  -khtml-opacity: 0;
+  opacity: 0;
+  cursor: pointer;
+  right: 0;
+}
+
+.auto-submitted-input {
+
+}
+.auto-submitted-form {
+
+}
+
+.elm #menu .dropdown-menu {
+  --bs-dropdown-border-width: 2px;
+
+}
+
+.content:hover .content-overlay {
+  opacity: 1;
+}

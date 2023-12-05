@@ -1,0 +1,87 @@
+{% extends 'storage/base.html' %}
+
+{% block data %}
+    <div class="row ms-2">
+        <div class="col-4">
+            <form class="form-inline navbar-left" action="{% url 'search' current_folder_hash %}" method="POST" >
+                <div class="input-group">
+                {% csrf_token %}
+                  <input name="search" type="text" class="form-control rounded col-auto" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                  <button type="submit" class="btn btn-outline-primary">search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row ms-5 mt-3">
+
+      <div class="row g-0">
+
+        <div class="col mt-2">
+             {% for name, item_hash in paths %}
+                <a href="{% url 'folders' folder_hash=item_hash %}" style="text-decoration: none; color: black;">{{name}}</a>
+                <a href="#" style="text-decoration: none; color: black;"><b>></b></a>
+             {% endfor%}
+
+        </div>
+        <div class="col-3 ">
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end me-4 mt-1">
+
+            <div class="btn btn-primary" id="rename_button" data-bs-toggle="modal" data-bs-target="#createModel">Create Folder</div>
+            <div class="dropdown">
+              <div class="btn btn-default border" id="imageDropdown" data-bs-toggle="dropdown">Upload ...</div>
+              <ul class="upload-btn dropdown-menu" role="menu" aria-labelledby="imageDropdown" style="cursor:pointer;">
+                <li>
+                  <form action="{% url 'file_upload' current_folder_hash %}" name="form_upload_file" id="form_upload_file" method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                    {{ form_file.errors }}
+                    {{ form_file.non_field_errors }}
+                  </form>
+                  <div class="dropdown-item" onclick="test()" href="#">Upload file
+                      {{ form_file.file }}
+                  </div>
+                </li>
+                <li>
+                  <form action="{% url 'folder_upload' current_folder_hash %}" name="form_upload_folder" id="form_upload_folder" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form_folder.errors }}
+                    {{ form_folder.non_field_errors }}
+                  </form>
+                  <div class="dropdown-item" onclick="test()" href="#">Upload folder
+                    {{ form_folder.folder }}
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+     <div class="border mt-2 border-bottom-0 border-top-3 border-end-0 border-start-0 border border-dark"></div>
+    <div class="modal fade" id="createModel" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+      <div class="modal-dialog " style="width:400px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form name="form_create" id="form_create" action="{% url 'folder_create' current_folder_hash %}" method="POST">
+                {% csrf_token %}
+                <input id='folder_name' name="folder_name" type="text" class="form-control" >
+
+            </form>
+          </div>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <input type="submit" form="form_create"  class="btn btn-primary" value="Create">
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <div class="col-md-auto mt-4">
+      {% block folder %}
+       {% endblock %}
+     </div>
+    </div>
+
+{% endblock %}
+

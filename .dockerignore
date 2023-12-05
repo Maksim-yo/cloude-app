@@ -1,0 +1,10 @@
+**/.git
+**/.gitignore
+**/.vscode
+**/.env
+Dockerfile
+README.md
+docker-compose.yml
+**/venv
+**/env
+**/polls
