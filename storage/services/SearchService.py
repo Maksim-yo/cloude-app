@@ -17,9 +17,9 @@ class SearchService:
         )
 
     def search(self, user_id: int, current_folder_hash: str, query: str) -> List[ObjectDTO]:
-        items = config.folder_service.get_items(user_id, current_folder_hash)
+        items = config.folder_service.get_items(user_id, current_folder_hash, True)
         res = []
         for item in items:
-            if query in item.name:
+            if query.lower() in item.name.lower():
                 res.append(item)
         return list(map(self._convert_dto, res))

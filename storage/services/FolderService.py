@@ -90,9 +90,9 @@ class FolderService:
         except Exception:
             raise FolderServiceError("Error occur during saving folder")
 
-    def get_items(self, user_id: int, folder_hash: str) -> List[ObjectDTO]:
+    def get_items(self, user_id: int, folder_hash: str, recursive: bool = False) -> List[ObjectDTO]:
         try:
-            objects = self.storage.list_objects(user_id, folder_hash)
+            objects = self.storage.list_objects(user_id, folder_hash, recursive)
             return list(map(self._convert_dto, objects))
         except NotCorrectTypeError:
             raise
