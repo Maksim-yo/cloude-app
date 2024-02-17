@@ -1,6 +1,7 @@
 import mimetypes
 import logging
 from typing import List
+from urllib.parse import quote
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -117,10 +118,10 @@ def folder_create(request, folder_parent_hash: str):
 @login_required
 def folder_download(request, folder_hash: str):
     try:
-        data = config.folder_service.download_folder(request.user.id, folder_hash)
+        name, data = config.folder_service.download_folder(request.user.id, folder_hash)
         response = HttpResponse(data)
         response['Content-Type'] = 'application/x-zip-compressed'
-        response['Content-Disposition'] = 'attachment; filename=album.zip'
+        response['Content-Disposition'] = f"filename*=utf-8''{quote(name)}.zip"
         return response
     except Exception as e:
         logging.error(e)

@@ -126,7 +126,7 @@ class FolderService:
         except Exception:
             raise
 
-    def download_folder(self, user_id: int, folder_hash: str) -> bytes:
+    def download_folder(self, user_id: int, folder_hash: str) -> tuple:
 
         try:
             folder = self.storage.get_object(user_id, folder_hash)
@@ -139,7 +139,7 @@ class FolderService:
                     file_content = self.file_service.download_file(user_id, obj.hash)
                     path = folder.name + '/' + get_relative_path(obj.path, folder.path)
                     zf.writestr(path, file_content.data)
-            return buffer.getvalue()
+            return folder.name, buffer.getvalue()
         except ObjectExistError:
             raise
         except Exception:
