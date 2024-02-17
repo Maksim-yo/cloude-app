@@ -11,6 +11,12 @@ from storage.utils import get_filename,  get_view_default_img
 from storage.services.dto.ObjectDTO import ObjectDTO
 from storage.services.dto.FileDTO import FileDTO
 import storage.config as config
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from storage.FileHandlers import CustomMemoryFileUploadHandler, CustomTemporaryFileUploadHandler
+
+
+def folder_repair_path(path: str):
+    return path.replace('|', '/')
 
 
 @login_required
@@ -65,13 +71,17 @@ def file_upload(request, folder_parent_hash: str):
     return redirect("folders", folder_parent_hash)
 
 
-@require_http_methods(['POST'])
-@login_required
+@csrf_exempt
 def folder_upload(request, folder_parent_hash: str):
-    form = FolderForm(request.POST, request.FILES)
+    request.upload_handlers = [CustomMemoryFileUploadHandler(request), CustomTemporaryFileUploadHandler(request)]
+    return _folder_upload(request, folder_parent_hash)
 
+
+@csrf_protect
+def _folder_upload(request, folder_parent_hash: str):
+    form = FolderForm(request.POST, request.FILES)
     files = request.FILES.getlist('folder', None)        # TODO: reimplementing uploading algorithm
-    files_raw = [FileDTO(path=file.name, data=file.read()) for file in files]
+    files_raw = [FileDTO(path=folder_repair_path(file.name), data=file.read()) for file in files]
     try:
         config.folder_service.save_folder(request.user.id, folder_parent_hash, files_raw)
         return redirect("folders", folder_parent_hash)
@@ -120,6 +130,7 @@ def file_delete(request, file_hash: str):
         return redirect('folders', parent.hash)
     except:
         pass
+
 
 @login_required
 def folder_rename(request, folder_hash: str):

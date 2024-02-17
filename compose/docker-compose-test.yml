@@ -13,15 +13,22 @@ services:
     depends_on:
       - db
       - minio
-    env_file:
-      - ./.env
-    links: 
+    links:
       - minio
       - db
     environment:
-      - MINIO_ENDPOINT=minio
-      - SQL_HOST=db
-      - SECRET_KEY=${SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+      SQL_HOST: ${SQL_HOST}
+      SQL_PASSWORD: ${SQL_PASSWORD}
+      SQL_PORT: ${SQL_PORT}
+      SQL_USER: ${SQL_USER}
+      SQL_DATABASE: ${SQL_DATABASE}
+      SQL_ENGINE: ${SQL_ENGINE}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DEBUG: ${DEBUG}
   db:
     image: 'postgres:15'
     volumes:
@@ -40,7 +47,7 @@ services:
       - '9000:9000'
       - '9001:9001'
     volumes:
-      - '~/data/minio:/data'
+      - minio_data:/data
     healthcheck:
       test:
         - CMD
@@ -54,3 +61,5 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+volumes:
+  minio_data:

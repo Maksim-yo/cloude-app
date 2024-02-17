@@ -21,8 +21,8 @@ COPY --from=builder /app/requirements.txt .
 
 RUN pip install --no-cache /wheels/*
 COPY . /app
-
+RUN python -m pip install django/
 RUN chown -R app:app /app
 
-USER app
+# USER app
 
