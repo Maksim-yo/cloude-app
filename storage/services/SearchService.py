@@ -1,14 +1,10 @@
-from storage.FileRepository import FileRepository
-from storage.services.dao.StorageDAO import StorageDAO
+import storage.config as config
 from storage.services.dto.ObjectDTO import ObjectDTO
 from storage.services.dto.StorageItemDTO import StorageDTO
 from typing import List
 
 
 class SearchService:
-
-    def __init__(self, storage: StorageDAO):
-        self.storage = storage
 
     def _convert_dto(self, item: StorageDTO) -> ObjectDTO:
         return ObjectDTO(
@@ -20,9 +16,8 @@ class SearchService:
             hash=item.hash,
         )
 
-    def search(self, user_id: int, query: str) -> List[ObjectDTO]:
-        root_item = self.storage.get_root(user_id)
-        items = self.storage.list_objects(user_id, root_item.hash, True)
+    def search(self, user_id: int, current_folder_hash: str, query: str) -> List[ObjectDTO]:
+        items = config.folder_service.get_items(user_id, current_folder_hash)
         res = []
         for item in items:
             if query in item.name:

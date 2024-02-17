@@ -13,8 +13,8 @@ class MinioObjectPath(ObjectPath):
     def compose(cls, **kwargs):
         try:
             return MinioObjectPath(**kwargs)
-        except:
-            raise ObjectPathError()
+        except Exception:
+            raise ObjectPathError("Number of arguments/types incorrect")
 
     def getParent(self):
         pass
@@ -46,9 +46,5 @@ class MinioObjectPath(ObjectPath):
     def getObjectName(self):
         if self.isFolder() and self.isRoot():
             return self.bucket_name
-        # elif self.isFolder():
-        #     self.pa
 
 
-a = MinioObjectPath('a','1')
-print(a.getFullPath())

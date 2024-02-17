@@ -6,7 +6,7 @@ from storage.FileRepository import FileRepository
 from storage.ObjectPath import ObjectPath
 from storage.services.dto.StorageItemDTO import StorageDTO
 from storage.utils import get_name_of_folder
-from storage.exceptions import MinioObjectExistError, NotCorrectTypeError
+from storage.exceptions import MinioObjectError, NotCorrectTypeError
 from minio.commonconfig import CopySource
 
 
@@ -23,14 +23,14 @@ class MinioRepository(FileRepository):
             if not self.client.bucket_exists(bucket_name):
                 self.client.make_bucket(bucket_name)
         except Exception as e:
-            raise MinioObjectExistError(e)
+            raise MinioObjectError(e)
 
     def get_bucket_or_create(self):
         name = 'test'
         try:
             self._create_bucket(name)
         except Exception as e:
-            raise MinioObjectExistError(e)
+            raise MinioObjectError(e)
         finally:
             return name
 
@@ -40,7 +40,7 @@ class MinioRepository(FileRepository):
                 return True
             return False
         except Exception:
-            raise MinioObjectExistError("Bucket with the same name already exists")
+            raise MinioObjectError("Bucket with the same name already exists")
 
     def listFolderObjects(self, folder_path: ObjectPath) -> List[StorageDTO]:
         return self._listFolderObjects(folder_path, False)
@@ -58,7 +58,7 @@ class MinioRepository(FileRepository):
                 objects.append(self._object_mapper(obj))
             return objects
         except Exception as e:
-            raise MinioObjectExistError(e)
+            raise MinioObjectError(e)
 
     def _object_mapper(self, item) -> StorageDTO:
         return StorageDTO(
@@ -71,6 +71,7 @@ class MinioRepository(FileRepository):
             user_id=-1,
             name=item.name,
         )
+
     def isSame(self, path: ObjectPath):
         pass
 
@@ -89,7 +90,7 @@ class MinioRepository(FileRepository):
                 name=name,
             )
         except Exception as e:
-            raise MinioObjectExistError(e)
+            raise MinioObjectError(e)
 
     def createFolder(self, folder_path: ObjectPath, name: str) -> StorageDTO:
         self.validateFolderPath(folder_path)
@@ -106,21 +107,21 @@ class MinioRepository(FileRepository):
                 name=get_name_of_folder(name),
             )
         except Exception as e:
-            raise MinioObjectExistError(e)
+            raise MinioObjectError(e)
 
     def deleteFolder(self, folder_path: ObjectPath):
         self.validateFolderPath(folder_path)
         try:
             self.client.remove_object(folder_path.getBucketName(), folder_path.getPartialPath())
-        except Exception:
-            raise Exception
+        except Exception as e:
+            raise MinioObjectError(e)
 
     def deleteFile(self, file_path: ObjectPath):
         self.validateFilePath(file_path)
         try:
             self.client.remove_object(file_path.getBucketName(), file_path.getPartialPath())
         except Exception:
-            raise Exception
+            raise MinioObjectError(e)
 
     def renameFolder(self, item_path: ObjectPath, new_path: ObjectPath):
         self.validateFolderPath(item_path)
@@ -132,8 +133,8 @@ class MinioRepository(FileRepository):
                                          CopySource(new_path.getBucketName(), new_path.getPartialPath()))
 
             # self.deleteFolder(item_path)
-        except Exception:
-            raise Exception
+        except Exception as e:
+            raise MinioObjectError(e)
 
     def renameFile(self, item_path: ObjectPath, new_path: ObjectPath):
         self.validateFilePath(item_path)
@@ -141,8 +142,8 @@ class MinioRepository(FileRepository):
         try:
             result = self.client.copy_object(item_path.getBucketName(), new_path.getPartialPath(),
                                          CopySource(self.bucket_name, item_path.getPartialPath()))
-        except Exception:
-            raise Exception
+        except Exception as e:
+            raise MinioObjectError(e)
 
     def moveFile(self, str_path: ObjectPath, destination_path: ObjectPath):
         pass

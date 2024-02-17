@@ -19,12 +19,12 @@ def init_config():
 
     try:
         minio_endpoint = os.environ.get('MINIO_ENDPOINT', 'localhost') + ":9000"
-        minio_access_key = os.environ.get('MINIO_ACCESS_KEY')
-        minio_secret_key = os.environ.get('MINIO_SECRET_KEY')
+        minio_access_key = os.environ.get('MINIO_ACCESS_KEY', 'test')
+        minio_secret_key = os.environ.get('MINIO_SECRET_KEY', 'test')
         client = minio.Minio(minio_endpoint, minio_access_key, minio_secret_key, secure=False)
-        logging.debug("Checking storage connectection")
+        logging.info("Checking storage connection")
         if not client.bucket_exists('nonexistingbucket'):
-            logging.debug("Object storage connected")
+            logging.info("Object storage connected")
         global file_repository
         global file_service
         global folder_service
@@ -32,12 +32,11 @@ def init_config():
         file_repository = MinioRepository(client)
         path_factory = MinioObjectFactory()
         storage = StorageDAO(path_factory)
-        search_service = SearchService(storage)
+        search_service = SearchService()
         file_service = FileService(file_repository, storage, path_factory)
         folder_service = FolderService(file_repository, storage, path_factory)
-    except Exception as error:
-        print(error)
-        print(minio_secret_key)
+    except minio.S3Error:
         logging.critical("Object storage not reachable")
         sys.exit()
+
 

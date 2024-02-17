@@ -5,14 +5,13 @@ import hashlib
 import random
 import string
 
+
 class DataType(Enum):
     DIR = 'dir'
     DOC = 'doc'
     IMG = 'img'
     PDF = 'pdf'
     DEFAULT = 'default'
-
-
 
 
 storage_types = {
@@ -73,6 +72,7 @@ def get_extension(name: str) -> str:
     indx = _name.find('.')
     return _name[0:indx + 1] if indx != -1 else ""
 
+
 def get_parent_path(path: str):
     indx = path.rfind('/')
     if indx == len(path) -1:
@@ -96,11 +96,13 @@ def get_folder_name(path: str) -> str:
     indx = path.rfind('/', 0, len(path) - 1)
     return path[indx + 1: len(path)] if indx != -1 else path
 
+
 def get_root_directory(path: str):
     indx = path.find('/')
     if indx == -1:
         raise Exception
     return path[0:indx + 1]
+
 
 def get_name_of_folder(path: str):
     path = path.replace('/', ' ')

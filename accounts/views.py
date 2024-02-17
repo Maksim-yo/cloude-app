@@ -2,9 +2,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from django.contrib.messages.views import SuccessMessageMixin
 from accounts.forms import SignupForm, LoginForm, UpdateProfileForm,  UpdateUserForm
 
 
@@ -28,6 +27,9 @@ def profile(request):
 
 
 class CustomLoginView(LoginView):
+
+    redirect_authenticated_user = True
+    success_url = reverse_lazy("storage")
     form_class = LoginForm
 
 
@@ -35,11 +37,11 @@ class SignupView(generic.CreateView):
     form_class = SignupForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
-    #
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.user.is_authenticated:
-    #         return redirect(to='/')
-    #     return super(SignupView, self).dispatch(request, *args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(to='/')
+        return super(SignupView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         form = self.form_class(initial=self.initial)

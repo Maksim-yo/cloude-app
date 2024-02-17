@@ -8,7 +8,7 @@ class ObjectExistError(Exception):
     pass
 
 
-class MinioObjectExistError(Exception):
+class MinioObjectError(Exception):
     pass
 
 

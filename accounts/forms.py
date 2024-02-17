@@ -69,6 +69,7 @@ class SignupForm(UserCreationForm):
         fields = ( 'username', 'first_name', 'last_name',
                   'email', 'password1', 'password2',)
 
+
 class UpdateUserForm(forms.ModelForm):
     username = forms.CharField(max_length=30,
                                required=True,

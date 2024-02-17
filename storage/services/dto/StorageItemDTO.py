@@ -12,7 +12,4 @@ class StorageDTO:
     is_dir: bool
     name: str
 
-    def compose_path(self):
-        return self.bucket_name + '/' + str(self.user_id) + '/' + self.path
-
 
