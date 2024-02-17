@@ -26,8 +26,11 @@ class StorageDAO:
             name=item.name,
         )
 
+    def get_user(self, user_id: int):
+        return User.objects.get(pk=user_id)
+
     def is_object_exist(self, user_id: int, path: str, quiet: bool = False):
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         try:
             item = user.storage_items.get(path__exact=path)
             return True
@@ -37,7 +40,7 @@ class StorageDAO:
             return False
 
     def _get_object(self, user_id: int, item_hash: str) -> StorageItem:
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         item = user.storage_items.get(hash__exact=item_hash)
         if item is None:
             raise ObjectExistError(f"Object with hash ${item_hash} doesn't exist")
@@ -49,7 +52,7 @@ class StorageDAO:
 
     def get_object_by_path(self, user_id: int, item_path: str):
         self.is_object_exist(user_id, item_path, True)
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         item = user.storage_items.get(path__exact=item_path)
         return item
 
@@ -60,7 +63,7 @@ class StorageDAO:
         return parent_path + '/' + obj_path
 
     def get_root_object(self, user_id: int) -> StorageDTO:
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         return self._orm_to_entity(user.root_item)
 
     def _list_objects_recursive(self, objects: List[List[StorageItem]], item: StorageItem) -> None:
@@ -85,7 +88,7 @@ class StorageDAO:
         return self._orm_to_entity(item.parent) if item.parent else None
 
     def list_objects(self, user_id: int, parent_hash: str, recursive: bool = False) -> List[StorageDTO]:
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         folder: StorageDTO = self.get_object(user_id, parent_hash)
         if folder.is_dir is False:
             raise NotCorrectTypeError(f"Object ${parent_hash} is not directory")
@@ -103,7 +106,7 @@ class StorageDAO:
         return objects
 
     def create_object(self, item: StorageDTO, parent_hash: str, user_id: int) -> StorageDTO:
-        user = User.objects.get(pk=user_id)
+        user = self.get_user(user_id)
         parent_obj = self._get_object(user_id, parent_hash)
         if not parent_obj.is_dir:
             raise NotCorrectTypeError(f"Object ${parent_obj.path} is not directory")
@@ -128,7 +131,7 @@ class StorageDAO:
     def create_root_folder(self, item: StorageDTO):
         obj_path = self.object_path_factory.compose(bucket_name=item.bucket_name, user_id=item.user_id, obj_path=item.path)
         item_hash = self.calculate_hash(obj_path.getFullPath())
-        user = User.objects.get(pk=item.user_id)
+        user = self.get_user(item.user_id)
         root_item = RootStorageItem.objects.create(
             user=user,
             path=item.path,
