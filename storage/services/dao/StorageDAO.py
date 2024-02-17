@@ -99,6 +99,7 @@ class StorageDAO:
             if recursive:
                 self._list_objects_recursive(_objects, item)
                 cur_objects = [self._orm_to_entity(_obj) for layer in _objects for _obj in layer]
+                cur_objects.insert(0, self._orm_to_entity(item))
                 objects.extend(cur_objects)
                 _objects = []
             else:
