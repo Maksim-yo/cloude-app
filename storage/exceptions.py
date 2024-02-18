@@ -26,3 +26,7 @@ class FolderServiceError(Exception):
 
 class ObjectPathError(Exception):
     pass
+
+
+class IllegalArgumentException(Exception):
+    pass
