@@ -35,7 +35,7 @@ class StorageDAO:
             item = user.storage_items.get(path__exact=path)
             return True
         except:
-            if quiet:
+            if not quiet:
                 raise ObjectExistError(f"Object with path : ${path} doesn't exist")
             return False
 
