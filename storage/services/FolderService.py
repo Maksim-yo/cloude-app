@@ -34,7 +34,6 @@ class FolderService:
 
     def _create_folder_recursive(self, user_id: int, path: str, parent_hash: str) -> StorageDTO:
         parent_item = self.storage.get_object(user_id, parent_hash)
-        parent: StorageDTO = parent_item
         folder_paths = split_path(path)
         folder_paths.pop()  # delete filename
 
@@ -42,12 +41,12 @@ class FolderService:
             # TODO: get rid off bucket_name depends or ...
             parent_path = self.object_path_factory.compose(user_id=user_id,
                                                      obj_path=parent_item.path + folder_path)
-            if self.storage.is_object_exist(user_id, parent_item.path + folder_path):
-                parent = self.storage.get_object_by_path(user_id, parent_item.path + folder_path)
+            if self.storage.is_object_exist(user_id, parent_item.path + folder_path, True):
+                parent_item = self.storage.get_object_by_path(user_id, parent_item.path + folder_path)
                 continue
             parent_folder = self.repository.createFolder(parent_path, get_folder_name(folder_path))
-            parent = self.storage.create_object(parent_folder, parent.hash, user_id)
-        return parent
+            parent_item = self.storage.create_object(parent_folder, parent_item.hash, user_id)
+        return parent_item
 
     def get_root_folder(self, user_id: int) -> StorageDTO:
         return self.storage.get_root_object(user_id)
@@ -66,9 +65,8 @@ class FolderService:
             parent_item = self.storage.get_object(user_id, parent)
             folder_path = self.object_path_factory.compose(user_id=user_id, obj_path=parent_item.path + name)
             self.storage.is_object_exist(user_id, parent_item.path + name, True)
-            folder = self.repository.createFolder(folder_path, name)
-            self.storage.create_object(folder, parent, user_id)
-            folder.user_id = user_id
+            temp_folder = self.repository.createFolder(folder_path, name)
+            folder = self.storage.create_object(temp_folder, parent, user_id)
             return folder
         except ObjectExistError as e:
             raise
@@ -87,8 +85,8 @@ class FolderService:
                 self.file_service.save_file(user_id, filename, parent_item.hash, file.data)
         except ObjectExistError:
             raise
-        except Exception:
-            raise FolderServiceError("Error occur during saving folder")
+        except Exception as e:
+            raise FolderServiceError(f"Error occur during saving folder. {e}")
 
     def get_items(self, user_id: int, folder_hash: str, recursive: bool = False) -> List[ObjectDTO]:
         try:
@@ -164,10 +162,12 @@ class FolderService:
         try:
             item: StorageDTO = self.storage.get_object(user_id, folder_hash)
             new_item = self.storage.rename_object(user_id, folder_hash, new_name)
-            item_path = self.object_path_factory.compose(user_id=item.user_id, bucket_name=item.bucket_name, obj_path=item.path)
-            new_item_path = self.object_path_factory.compose(user_id=new_item.user_id, obj_path=new_item.path)
+            item_path = self.object_path_factory.compose(user_id=item.user_id, bucket_name=item.bucket_name,
+                                                         obj_path=item.path)
+            new_item_path = self.object_path_factory.compose(user_id=new_item.user_id, bucket_name=new_item.bucket_name,
+                                                             obj_path=new_item.path)
             self.repository.renameFolder(item_path, new_item_path)
         except ObjectExistError:
             raise
-        except Exception:
-            raise FolderServiceError("Error occur during renaming folder")
+        except Exception as e:
+            raise FolderServiceError(f"Error occur during renaming folder. {e}")
