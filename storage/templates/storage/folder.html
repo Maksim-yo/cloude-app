@@ -4,11 +4,13 @@
 
 
 <div class="row ms-1">
- {% for item, img in items %}
-      <div class="col-md-auto mt-4">
-     {% include "storage/item.html" with item=item img=img %}
-      </div>
- {% endfor%}
+ {% if items %}
+     {% for item, img in items %}
+          <div class="col-md-auto mt-4">
+         {% include "storage/item.html" with item=item img=img %}
+          </div>
+     {% endfor%}
+ {% endif %}
 
 <div class="modal fade" id="renameModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog " style="width:400px;">
@@ -17,9 +19,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form name="form_name_update" id="form_name_update" action="" method="POST">
+            <form name="form_name_update" id="form_name_update"  action="" method="POST"
+                  data-folder-url="{% url 'folder_rename' 'placeholder' %}"
+                  data-file-url="{% url 'file_rename' 'placeholder' %}">
                 {% csrf_token %}
-                <input id='new_folder_name' name="new_folder_name" type="text" class="form-control" >
+                <input id='new_object_name' name="new_object_name" type="text" class="form-control" >
 
             </form>
           </div>
@@ -30,5 +34,5 @@
         </div>
     </div>
   </div>
-    </div>
+</div>
 {% endblock %}

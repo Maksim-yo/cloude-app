@@ -1,12 +1,13 @@
+import datetime
+from typing import List
+
 from django.contrib.auth.models import User
+
 from storage.models import StorageItem, RootStorageItem
 from storage.services.dto.StorageItemDTO import StorageDTO
 from storage.exceptions import ObjectExistError, NotCorrectTypeError
-from storage.utils import path_hash, get_name_of_folder
+from storage.utils import path_hash, is_folder, get_relative_path, get_object_name
 from storage.ObjectPathFactory import ObjectPathFactory
-
-import datetime
-from typing import List
 
 
 class StorageDAO:
@@ -50,8 +51,8 @@ class StorageDAO:
         item = self._get_object(user_id, item_hash)
         return self._orm_to_entity(item)
 
-    def get_object_by_path(self, user_id: int, item_path: str):
-        self.is_object_exist(user_id, item_path, True)
+    def get_object_by_path(self, user_id: int, item_path: str) -> StorageItem:
+        self.is_object_exist(user_id, item_path, False)
         user = self.get_user(user_id)
         item = user.storage_items.get(path__exact=item_path)
         return item
@@ -151,9 +152,8 @@ class StorageDAO:
     def delete_object(self, user_id: int, item_hash: str) -> List[StorageDTO]:
 
         item: StorageItem = self._get_object(user_id, item_hash)
-        items: List[List[StorageItem]] = []
+        items: List[List[StorageItem]] = [[item]]
         self._list_objects_recursive(items, item)
-        items.append([item])
         deleted_objects: List[StorageDTO] = []
         for level in items:
             for obj in level:
@@ -165,7 +165,20 @@ class StorageDAO:
     def rename_object(self, user_id: int, item_hash: str, new_name: str) -> StorageDTO:
         item: StorageItem = self._get_object(user_id, item_hash)
         parent: StorageItem = item.parent
-        item.path = parent.path + new_name
-        item.name = get_name_of_folder(new_name)
-        item.save()
+        new_path = parent.path + new_name
+        base_path = item.path
+        if (item.is_dir and not is_folder(new_name)) or (not item.is_dir and is_folder(new_name)):
+            raise NotCorrectTypeError(f"Object and name have different type")
+        items: List[List[StorageItem]] = [[item]]
+        self._list_objects_recursive(items, item)
+        for level in items:
+            for obj in level:
+                relative_path = get_relative_path(obj.path, base_path)
+                if item == obj:
+                    relative_path = ''
+                new_object_path = new_path + relative_path
+                obj.name = obj.name if not relative_path == '' else get_object_name(new_name)
+                obj.path = new_object_path
+                obj.hash = self.calculate_hash(new_object_path)
+                obj.save()
         return self._orm_to_entity(item)

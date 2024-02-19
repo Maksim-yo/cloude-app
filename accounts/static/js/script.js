@@ -2,17 +2,21 @@
     $(document).ready(function () {
 
       $('.upload-btn .upload-btn-input').change(function (ev) {
-        console.log('BYTTIN CLI')
         $('.upload-btn .upload-btn-form').submit()
       });
       $('.dropdown-menu #rename_button').on('click', function (ev){
-        console.log('TEST')
-        var item_id = $(current_selected_item).attr('id');
-        $('#form_name_update').attr('action', item_id)
+        var item_hash = $(current_selected_item).attr('data-hash');
+        var is_folder = $(current_selected_item).attr('data-value');
+        var item_placeholder_url = null;
+        if (is_folder === 'True')
+           item_placeholder_url = $('#form_name_update').attr('data-folder-url');
+        else
+           item_placeholder_url = $('#form_name_update').attr('data-file-url');
+        var item_rename_url = item_placeholder_url.replace('placeholder', item_hash)
+        $('#form_name_update').attr('action', item_rename_url)
 
       })
       $('.elm ').click(function (ev) {
-      console.log('hello')
         item = this
         if (current_selected_item == item)
           return
@@ -35,13 +39,7 @@
       });
 
     });
-    function test() {
-      console.log('FSDFASF')
-    }
 
-    function onDoubleClick(item) {
-      window.location.href = "s";
-    }
     function itemOnClick(item) {
 
       if (current_selected_item == item)

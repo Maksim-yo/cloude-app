@@ -2,12 +2,13 @@ import io
 from typing import List
 
 import minio
+from minio.commonconfig import CopySource
+
 from storage.FileRepository import FileRepository
 from storage.ObjectPath import ObjectPath
 from storage.services.dto.StorageItemDTO import StorageDTO
-from storage.utils import get_name_of_folder
+from storage.utils import get_relative_path, get_name_of_folder
 from storage.exceptions import MinioObjectError, NotCorrectTypeError
-from minio.commonconfig import CopySource
 
 
 # TODO: get rid of hardcoded bucket_name
@@ -112,7 +113,9 @@ class MinioRepository(FileRepository):
     def deleteFolder(self, folder_path: ObjectPath):
         self.validateFolderPath(folder_path)
         try:
-            self.client.remove_object(folder_path.getBucketName(), folder_path.getPartialPath())
+            objects = self.client.list_objects(folder_path.getBucketName(), folder_path.getPartialPath(), True)
+            for obj in objects:
+                self.client.remove_object(obj.bucket_name, obj.object_name)
         except Exception as e:
             raise MinioObjectError(e)
 
@@ -120,50 +123,43 @@ class MinioRepository(FileRepository):
         self.validateFilePath(file_path)
         try:
             self.client.remove_object(file_path.getBucketName(), file_path.getPartialPath())
-        except Exception:
-            raise MinioObjectError(e)
-
-    def renameFolder(self, item_path: ObjectPath, new_path: ObjectPath):
-        self.validateFolderPath(item_path)
-        self.validateFolderPath(new_path)
-        try:
-            self.client.copy_object(new_path.getBucketName(), new_path.getPartialPath(),
-                                         CopySource(item_path.getBucketName(), item_path.getPartialPath()))
-            self.client.copy_object(item_path.getBucketName(), item_path.getPartialPath(),
-                                         CopySource(new_path.getBucketName(), new_path.getPartialPath()))
-
-            # self.deleteFolder(item_path)
         except Exception as e:
             raise MinioObjectError(e)
 
-    def renameFile(self, item_path: ObjectPath, new_path: ObjectPath):
-        self.validateFilePath(item_path)
+    def renameFolder(self, source_path: ObjectPath, new_path_object: ObjectPath):
+        self.validateFolderPath(source_path)
+        self.validateFolderPath(new_path_object)
+        try:
+            objects = self.client.list_objects(source_path.getBucketName(), source_path.getPartialPath(), True)
+            base_path = source_path.getPartialPath()
+            for obj in objects:
+                relative_path = get_relative_path(obj.object_name, base_path)
+                if obj.object_name == base_path:
+                    relative_path = ''
+                new_path = new_path_object.getPartialPath() + relative_path
+                self.client.copy_object(new_path_object.getBucketName(), new_path,
+                                         CopySource(source_path.getBucketName(), obj.object_name))
+            self.deleteFolder(source_path)
+        except Exception as e:
+            raise MinioObjectError(e)
+
+    def renameFile(self, source_path: ObjectPath, new_path: ObjectPath):
+        self.validateFilePath(source_path)
         self.validateFilePath(new_path)
         try:
-            result = self.client.copy_object(item_path.getBucketName(), new_path.getPartialPath(),
-                                         CopySource(self.bucket_name, item_path.getPartialPath()))
+            self.client.copy_object(source_path.getBucketName(), new_path.getPartialPath(),
+                                         CopySource(self.bucket_name, source_path.getPartialPath()))
+            self.deleteFile(source_path)
         except Exception as e:
             raise MinioObjectError(e)
-
-    def moveFile(self, str_path: ObjectPath, destination_path: ObjectPath):
-        pass
-
-    def moveFolder(self, src_path: ObjectPath, destination_path: ObjectPath):
-        pass
-
-    def copyFolder(self):
-        pass
-
-    def copyFile(self):
-        pass
 
     def validateFolderPath(self, folder_path: ObjectPath):
         if not folder_path.isFolder():
-            raise NotCorrectTypeError()
+            raise NotCorrectTypeError(f"Object with path: {folder_path.getFullPath()} is not a folder")
 
     def validateFilePath(self, file_path: ObjectPath):
         if file_path.isFolder():
-            raise NotCorrectTypeError()
+            raise NotCorrectTypeError(f"Object with path: {file_path.getFullPath()} is not a file")
 
     def isObjectExist(self, file_path: ObjectPath):
         try:
@@ -177,8 +173,8 @@ class MinioRepository(FileRepository):
             self.validateFilePath(file_path)
             response = self.client.get_object(file_path.getBucketName(), file_path.getPartialPath())
             return response.read()
-        except:
-            raise Exception
+        except Exception as e:
+            raise MinioObjectError(e)
         finally:
             response.close()
             response.release_conn()

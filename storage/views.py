@@ -149,10 +149,21 @@ def file_delete(request, file_hash: str):
 
 @login_required
 def folder_rename(request, folder_hash: str):
-    folder_name = request.POST.get('new_folder_name') + '/'
+    folder_name = request.POST.get('new_object_name') + '/'
     parent = config.folder_service.folder_parent(request.user.id, folder_hash)
     try:
         config.folder_service.rename_folder(request.user.id, folder_hash, folder_name)
+        return redirect('folders', parent.hash)
+    except Exception as e:
+        logging.error(e)
+
+
+@login_required
+def file_rename(request, file_hash: str):
+    folder_name = request.POST.get('new_object_name')
+    parent = config.folder_service.folder_parent(request.user.id, file_hash)
+    try:
+        config.file_service.rename_file(request.user.id, file_hash, folder_name)
         return redirect('folders', parent.hash)
     except Exception as e:
         logging.error(e)

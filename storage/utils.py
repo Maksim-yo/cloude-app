@@ -65,6 +65,11 @@ def get_folder_name(path: str) -> str:
     return path[indx + 1: len(path)] if indx != -1 else path
 
 
+def get_object_name(object: str):
+    name = object.replace('/', '')
+    return name.strip()
+
+
 def get_name_of_folder(path: str):
     path = path.replace('/', '')
     return path.strip()
@@ -89,7 +94,8 @@ def generate_random_name(n: int):
 def get_relative_path(source: str, path_relative: str) -> str:
     path = PurePath(source)
     try:
-        return str(path.relative_to(path_relative)).replace(os.sep, '/')
+        relative_path = str(path.relative_to(path_relative)).replace(os.sep, '/')
+        return ("" if relative_path == '.' else relative_path) + ('/' if source[-1] == '/' else '')
     except:
         return ""
 

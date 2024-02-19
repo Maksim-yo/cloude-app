@@ -50,3 +50,16 @@ class FileService:
         except Exception as e:
             raise FileServiceError("Error occur during deleting file")
 
+    def rename_file(self, user_id:int, file_hash: str, new_name: str):
+        try:
+            item: StorageDTO = self.storage.get_object(user_id, file_hash)
+            new_item = self.storage.rename_object(user_id, file_hash, new_name)
+            item_path = self.object_path_factory.compose(user_id=item.user_id, bucket_name=item.bucket_name,
+                                                         obj_path=item.path)
+            new_item_path = self.object_path_factory.compose(user_id=new_item.user_id, bucket_name=new_item.bucket_name,
+                                                             obj_path=new_item.path)
+            self.repository.renameFile(item_path, new_item_path)
+        except ObjectExistError:
+            raise
+        except Exception as e:
+            raise FileServiceError(f"Error occur during renaming file. {e}")
