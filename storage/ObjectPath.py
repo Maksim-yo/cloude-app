@@ -33,10 +33,6 @@ class ObjectPath(ABC):
         pass
 
     @abstractmethod
-    def getObjectName(self):
-        pass
-
-    @abstractmethod
     def getBucketName(self):
         pass
 
