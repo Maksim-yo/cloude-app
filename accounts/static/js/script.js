@@ -52,5 +52,4 @@
         })
       current_selected_item = item
       $(current_selected_item).attr('style', function (i, s) { return (s || '') + 'border-color: #7FCBD8 !important;background: rgba(144, 144, 144, 0.3);' })
-      console.log(item)
     }

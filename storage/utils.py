@@ -22,6 +22,7 @@ storage_types = {
 
     DataType.IMG: ["png", "jpg"],
     DataType.DOC: ['doc', 'docx'],
+    DataType.PDF: ['pdf']
 
 }
 

@@ -43,8 +43,5 @@ class MinioObjectPath(ObjectPath):
     def getBucketName(self) -> str:
         return self.bucket_name
 
-    def getObjectName(self):
-        if self.isFolder() and self.isRoot():
-            return self.bucket_name
 
 

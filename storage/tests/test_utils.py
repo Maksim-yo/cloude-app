@@ -41,16 +41,23 @@ class UtilsTest(TestCase):
 
     def test_get_relative_path(self):
         base_path = "test/hello/hello2"
+        base_path2 = "hello/test/"
         path1 = "test/hello/hello2/testing12"
         path2 = "test"
         path3 = "/"
+        path4 = 'hello2/'
+        path5 = 'test/'
         relative_path1 = get_relative_path(path1, base_path)
         relative_path2 = get_relative_path(base_path, path1)
         relative_path3 = get_relative_path(base_path, path2)
         relative_path4 = get_relative_path(base_path, path3)
-
+        relative_path5 = get_relative_path(base_path, path4)
+        relative_path6 = get_relative_path(base_path2, path2)
+        relative_path7 = get_relative_path(base_path2, path5)
         self.assertEqual(relative_path1, 'testing12')
         self.assertEqual(relative_path2, '')
         self.assertRegex(relative_path3, 'hello/hello2')
         self.assertEqual(relative_path4, "")
-
+        self.assertEqual(relative_path5, '')
+        self.assertEqual(relative_path6, '')
+        self.assertEqual(relative_path7, '')

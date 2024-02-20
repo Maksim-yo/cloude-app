@@ -6,7 +6,7 @@ from accounts.models import Profile
 
 class UpdateProfileForm(forms.ModelForm):
     avatar = forms.ImageField(widget=forms.FileInput(
-        attrs={'form':'update_avatar', 'class': 'form-control mb-1 invisible-input'}))
+        attrs={'form':'update_avatar', 'class': 'form-control mb-1 '}))
 
     class Meta:
         model = Profile
@@ -24,7 +24,6 @@ class LoginForm(AuthenticationForm):
                                    attrs={
                                        'class': 'form-control mb-1',
                                        'placeholder': 'Password'}))
-    # remember_me = forms.BooleanField(required=False)
 
     class Meta:
         model = User

@@ -21,8 +21,8 @@
           </div>
           <div class="modal-body">
             <form name="form_name_update" id="form_name_update"  action="" method="POST"
-                  data-folder-url="{% url 'folder_rename' 'placeholder' %}"
-                  data-file-url="{% url 'file_rename' 'placeholder' %}">
+                  data-folder-url="{% url 'storage:folder_rename' 'placeholder' %}"
+                  data-file-url="{% url 'storage:file_rename' 'placeholder' %}">
                 {% csrf_token %}
                 <input id='new_object_name' name="new_object_name" type="text" class="form-control" >
 

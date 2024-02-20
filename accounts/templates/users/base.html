@@ -27,28 +27,28 @@
         <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
          <li class="nav-item lt-nav-hover px-2">
              {% if user.is_authenticated %}
-             <a class="nav-link temp" href="{% url 'folders' user.root_item.hash %}">Home</a>
+             <a class="nav-link temp" href="{% url 'storage:folders' user.root_item.hash %}">Home</a>
              {% endif %}
          </li>
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
        {% if user.is_authenticated %}
           <li class="nav-item lt-nav-hover px-2">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
           </li>
           <li class="nav-item  px-2">
-            <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}</a>
+            <a class="nav-link" href="{% url 'accounts:profile' %}">{{ user.username }}</a>
           </li>
 
           <li class="nav-item px-2">
-            <a href="{% url 'profile' %}">
+            <a href="{% url 'accounts:profile' %}">
             <img src="{{user.profile.avatar.url}}" class=" rounded-circle" width="40" height="40">
             </a>
           </li>
        {% else %}
            <li class="nav-item px-2">
-                <a href="{% url 'login' %}" class="btn ">Login</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Join Now</a>
+                <a href="{% url 'accounts:login' %}" class="btn ">Login</a>
+                <a href="{% url 'accounts:signup' %}" class="btn btn-primary">Join Now</a>
            </li>
        {% endif %}
         </ul>

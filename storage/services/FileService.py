@@ -19,7 +19,10 @@ class FileService:
         try:
             parent_item = self.storage.get_object(user_id, parent)
             file_path = parent_item.path + name
-            self.storage.is_object_exist(user_id, file_path, True)
+            is_exist = self.storage.is_object_exist(user_id, file_path)
+            if is_exist:
+                raise ObjectExistError(f"Object with name path {file_path} already exist")
+
             path = self.object_path_factory.compose(user_id=user_id, obj_path=file_path)
             item = self.repository.createFile(path, name, io.BytesIO(data))
             self.storage.create_object(item, parent, user_id)

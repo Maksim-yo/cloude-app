@@ -41,7 +41,7 @@ class FolderService:
             # TODO: get rid off bucket_name depends or ...
             parent_path = self.object_path_factory.compose(user_id=user_id,
                                                      obj_path=parent_item.path + folder_path)
-            if self.storage.is_object_exist(user_id, parent_item.path + folder_path, True):
+            if self.storage.is_object_exist(user_id, parent_item.path + folder_path):
                 parent_item = self.storage.get_object_by_path(user_id, parent_item.path + folder_path)
                 continue
             parent_folder = self.repository.createFolder(parent_path, get_folder_name(folder_path))
@@ -60,13 +60,15 @@ class FolderService:
         except Exception:
             raise FolderServiceError("Error occur during saving root folder")
 
-    def save_empty_folder(self, user_id: int, parent: str, name: str) -> StorageDTO:
+    def save_empty_folder(self, user_id: int, parent_hash: str, name: str) -> StorageDTO:
         try:
-            parent_item = self.storage.get_object(user_id, parent)
+            parent_item = self.storage.get_object(user_id, parent_hash)
             folder_path = self.object_path_factory.compose(user_id=user_id, obj_path=parent_item.path + name)
-            self.storage.is_object_exist(user_id, parent_item.path + name, True)
+            is_exist = self.storage.is_object_exist(user_id, folder_path.getPartialPath())
+            if is_exist:
+                raise ObjectExistError(f"Object with name path {folder_path.getFullPath()} already exist")
             temp_folder = self.repository.createFolder(folder_path, name)
-            folder = self.storage.create_object(temp_folder, parent, user_id)
+            folder = self.storage.create_object(temp_folder, parent_hash, user_id)
             return folder
         except ObjectExistError as e:
             raise

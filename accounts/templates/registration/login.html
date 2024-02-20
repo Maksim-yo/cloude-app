@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container min-vh-100 d-flex flex-column align-items-center justify-content-center">
 
-<form method="post" class="card border-0 spacing" novalidate action="{% url 'login' %}">
+<form method="post" class="card border-0 spacing" novalidate action="{% url 'accounts:login' %}">
 {% csrf_token %}
   <h2 class="text-center">Log in to your account</h2>
   	{% for field in form %}
@@ -20,8 +20,7 @@
 		{% endfor %}
 <input type="submit" value="Login" class="btn btn-primary full-width">
 <input type="hidden" name="next" value="{{ next }}">
-<p class="text-center mb-3">Forgot your password <a href="#">Reset Password</a></p>
-<p class="text-center">Don't have a account? <a href="{% url 'signup' %}">Join Now</a></p>
+<p class="text-center">Don't have a account? <a href="{% url 'accounts:signup' %}">Join Now</a></p>
 
 </form>
 </div>

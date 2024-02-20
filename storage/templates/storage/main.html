@@ -3,7 +3,7 @@
 {% block data %}
     <div class="row ms-2">
         <div class="col-4">
-            <form class="form-inline navbar-left" action="{% url 'search' current_folder_hash %}" method="POST" >
+            <form class="form-inline navbar-left" action="{% url 'storage:search' current_folder_hash %}" method="POST" >
                 <div class="input-group">
                 {% csrf_token %}
                   <input name="search" type="text" class="form-control rounded col-auto" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
@@ -18,7 +18,7 @@
 
         <div class="col mt-2">
              {% for name, item_hash in paths %}
-                <a href="{% url 'folders' folder_hash=item_hash %}" style="text-decoration: none; color: black;">{{name}}</a>
+                <a href="{% url 'storage:folders' folder_hash=item_hash %}" style="text-decoration: none; color: black;">{{name}}</a>
                 <a href="#" style="text-decoration: none; color: black;"><b>></b></a>
              {% endfor%}
 
@@ -31,7 +31,7 @@
               <div class="btn btn-default border" id="imageDropdown" data-bs-toggle="dropdown">Upload ...</div>
               <ul class="upload-btn dropdown-menu" role="menu" aria-labelledby="imageDropdown" style="cursor:pointer;">
                 <li>
-                  <form action="{% url 'file_upload' current_folder_hash %}" name="form_upload_file" id="form_upload_file" method="POST" enctype="multipart/form-data">
+                  <form action="{% url 'storage:file_upload' current_folder_hash %}" name="form_upload_file" id="form_upload_file" method="POST" enctype="multipart/form-data">
                       {% csrf_token %}
                     {{ form_file.errors }}
                     {{ form_file.non_field_errors }}
@@ -41,7 +41,7 @@
                   </div>
                 </li>
                 <li>
-                  <form action="{% url 'folder_upload' current_folder_hash %}" name="form_upload_folder" id="form_upload_folder" method="POST" enctype="multipart/form-data">
+                  <form action="{% url 'storage:folder_upload' current_folder_hash %}" name="form_upload_folder" id="form_upload_folder" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form_folder.errors }}
                     {{ form_folder.non_field_errors }}
@@ -64,7 +64,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form name="form_create" id="form_create" action="{% url 'folder_create' current_folder_hash %}" method="POST">
+            <form name="form_create" id="form_create" action="{% url 'storage:folder_create' current_folder_hash %}" method="POST">
                 {% csrf_token %}
                 <input id='folder_name' name="folder_name" type="text" class="form-control" >
 

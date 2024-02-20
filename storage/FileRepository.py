@@ -34,22 +34,6 @@ class FileRepository(ABC):
         pass
 
     @abstractmethod
-    def moveFile(self, str_path: ObjectPath, destination_path: ObjectPath):
-        pass
-
-    @abstractmethod
-    def moveFolder(self, src_path: ObjectPath, destination_path: ObjectPath):
-        pass
-
-    @abstractmethod
-    def copyFolder(self):
-        pass
-
-    @abstractmethod
-    def copyFile(self):
-        pass
-
-    @abstractmethod
     def listFolderObjects(self, folder_path: ObjectPath):
         pass
 

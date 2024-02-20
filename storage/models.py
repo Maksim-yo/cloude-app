@@ -18,7 +18,7 @@ class StorageItem(PolymorphicModel):
     name = models.CharField(max_length=255, null=False)
 
 
-class RootStorageItem(StorageItem):
+class  RootStorageItem(StorageItem):
     user_root = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name="root_item", on_delete=models.CASCADE
     )

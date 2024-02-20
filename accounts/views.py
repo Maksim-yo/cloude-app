@@ -14,10 +14,11 @@ def profile(request):
                                          instance=request.user.profile)
         user_form = UpdateUserForm(request.POST, instance=request.user)
         if profile_form.is_valid() and user_form.is_valid():
+            profile_form.avatar
             profile_form.save()
             user_form.save()
             messages.success(request, 'Your profile is updated successfully')
-            return redirect('login')
+            return redirect('storage:root')
 
     else:
         profile_form = UpdateProfileForm(instance=request.user.profile)
@@ -29,18 +30,18 @@ def profile(request):
 class CustomLoginView(LoginView):
 
     redirect_authenticated_user = True
-    success_url = reverse_lazy("storage")
+    success_url = reverse_lazy("storage:root")
     form_class = LoginForm
 
 
 class SignupView(generic.CreateView):
     form_class = SignupForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('accounts:login')
     template_name = 'registration/signup.html'
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(to='/')
+            return redirect("storage:root")
         return super(SignupView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -53,6 +54,6 @@ class SignupView(generic.CreateView):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}')
-            return redirect(to='login')
+            return redirect('accounts:login')
         return render(request, self.template_name, {'form': form})
 

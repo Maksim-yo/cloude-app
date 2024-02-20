@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 from storage.FileHandlers import CustomMemoryFileUploadHandler, CustomTemporaryFileUploadHandler
 from storage.forms import FileForm, FolderForm
-from storage.utils import get_filename,  get_view_default_img
+from storage.utils import get_view_default_img
 from storage.services.dto.ObjectDTO import ObjectDTO
 from storage.services.dto.FileDTO import FileDTO
 import storage.config as config
@@ -72,7 +72,7 @@ def file_upload(request, folder_parent_hash: str):
         if form.is_valid():
             file = request.FILES['file']
             config.file_service.save_file(request.user.id, file.name, folder_parent_hash, file.read())
-        return redirect("folders", folder_parent_hash)
+        return redirect("storage:folders", folder_parent_hash)
     except Exception as e:
         logging.error(e)
 
@@ -99,7 +99,7 @@ def _folder_upload(request, folder_parent_hash: str):
     files_raw = [FileDTO(path=folder_repair_path(file.name), data=file.read()) for file in files]
     try:
         config.folder_service.save_folder(request.user.id, folder_parent_hash, files_raw)
-        return redirect("folders", folder_parent_hash)
+        return redirect("storage:folders", folder_parent_hash)
     except Exception as e:
         logging.error(e)
 
@@ -110,7 +110,7 @@ def folder_create(request, folder_parent_hash: str):
     folder_name = request.POST.get('folder_name') + '/'
     try:
         config.folder_service.save_empty_folder(request.user.id, folder_parent_hash, folder_name)
-        return redirect("folders", folder_parent_hash)
+        return redirect("storage:folders", folder_parent_hash)
     except Exception as e:
         logging.error(e)
 
@@ -132,7 +132,7 @@ def folder_delete(request, folder_hash: str):
     try:
         parent = config.folder_service.folder_parent(request.user.id, folder_hash)
         config.folder_service.delete_folder(request.user.id, folder_hash)
-        return redirect('folders', parent.hash)
+        return redirect('storage:folders', parent.hash)
     except Exception as e:
         logging.error(e)
 
@@ -142,7 +142,7 @@ def file_delete(request, file_hash: str):
     try:
         parent = config.folder_service.folder_parent(request.user.id, file_hash)
         config.file_service.delete_file(request.user.id, file_hash)
-        return redirect('folders', parent.hash)
+        return redirect('storage:folders', parent.hash)
     except Exception as e:
         logging.error(e)
 
@@ -153,7 +153,7 @@ def folder_rename(request, folder_hash: str):
     parent = config.folder_service.folder_parent(request.user.id, folder_hash)
     try:
         config.folder_service.rename_folder(request.user.id, folder_hash, folder_name)
-        return redirect('folders', parent.hash)
+        return redirect('storage:folders', parent.hash)
     except Exception as e:
         logging.error(e)
 
@@ -164,7 +164,7 @@ def file_rename(request, file_hash: str):
     parent = config.folder_service.folder_parent(request.user.id, file_hash)
     try:
         config.file_service.rename_file(request.user.id, file_hash, folder_name)
-        return redirect('folders', parent.hash)
+        return redirect('storage:folders', parent.hash)
     except Exception as e:
         logging.error(e)
 

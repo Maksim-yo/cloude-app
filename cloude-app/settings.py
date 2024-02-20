@@ -163,19 +163,11 @@ LOGIN_URL = "/accounts/login"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-ASGI_APPLICATION = "cloude-app.asgi.application"
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
-    },
-}
 
 DEFAULT_VIEW_STORAGE_ITEMS_IMG = {
     "dir": "/media/folder.png",
     "default": "/media/file.png",
-    "img": "",
-    "doc": "",
+    "doc": "/media/doc_image.png",
+    "pdf": "/media/pdf_image.png",
+    "img": "/media/png_image.png"
 }

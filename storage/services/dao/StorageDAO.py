@@ -30,14 +30,12 @@ class StorageDAO:
     def get_user(self, user_id: int):
         return User.objects.get(pk=user_id)
 
-    def is_object_exist(self, user_id: int, path: str, quiet: bool = False):
+    def is_object_exist(self, user_id: int, path: str):
         user = self.get_user(user_id)
         try:
             item = user.storage_items.get(path__exact=path)
             return True
         except:
-            if not quiet:
-                raise ObjectExistError(f"Object with path : ${path} doesn't exist")
             return False
 
     def _get_object(self, user_id: int, item_hash: str) -> StorageItem:
@@ -52,7 +50,7 @@ class StorageDAO:
         return self._orm_to_entity(item)
 
     def get_object_by_path(self, user_id: int, item_path: str) -> StorageItem:
-        self.is_object_exist(user_id, item_path, False)
+        self.is_object_exist(user_id, item_path)
         user = self.get_user(user_id)
         item = user.storage_items.get(path__exact=item_path)
         return item

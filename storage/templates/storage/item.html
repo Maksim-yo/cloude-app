@@ -2,7 +2,7 @@
 
 {% load static %}
  <div class="elm content border border-secondary rounded-3 d-flex align-items-center justify-content-center"
-          style="width:150px;height:150px;" id="{% url 'folders' item.hash %}" data-bs-toggle="tooltip"
+          style="width:150px;height:150px;" id="{% url 'storage:folders' item.hash %}" data-bs-toggle="tooltip"
       data-hash="{{item.hash}}" data-bs-placement="bottom" title="{{ item.name }}" data-value="{{item.is_dir}}">
   <div class="row g-0">
     <div class="content-overlay">
@@ -31,13 +31,13 @@
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
           {% if item.is_dir %}
-           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'folder_download' folder_hash=item.hash %}">Download</a></li>
-           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'folder_delete' folder_hash=item.hash %}">Delete</a></li>
+           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'storage:folder_download' folder_hash=item.hash %}">Download</a></li>
+           <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'storage:folder_delete' folder_hash=item.hash %}">Delete</a></li>
            <li> <button name="rename_button" id="rename_button" class="dropdown-item custom-dropdown-item" data-bs-toggle="modal" data-bs-target="#renameModel">Rename</button></li>
 
           {% else %}
-            <li><a class="dropdown-item custom-dropdown-item" href="{% url 'file_download' file_hash=item.hash %}">Download</a><li/>
-            <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'file_delete' file_hash=item.hash %}">Delete</a></li>
+            <li><a class="dropdown-item custom-dropdown-item" href="{% url 'storage:file_download' file_hash=item.hash %}">Download</a><li/>
+            <li> <a class="dropdown-item custom-dropdown-item" href="{% url 'storage:file_delete' file_hash=item.hash %}">Delete</a></li>
             <li> <button name="rename_button" id="rename_button" class="dropdown-item custom-dropdown-item" data-bs-toggle="modal" data-bs-target="#renameModel">Rename</button></li>
 
           {% endif %}

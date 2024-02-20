@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 import storage.views as views
 
-# app_name = 'storagezzzzz'
+app_name = 'storage'
 
 urlpatterns = [
     path("", views.index, name="root"),
