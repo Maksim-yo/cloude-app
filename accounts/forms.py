@@ -36,28 +36,12 @@ class SignupForm(UserCreationForm):
                                    attrs={
                                        'class': 'form-control mb-1',
                                        'placeholder': 'Enter Username'}))
-
-    first_name = forms.CharField(max_length=100,
-                                 widget=forms.TextInput(
-                                     attrs={
-                                         'class': 'form-control mb-1',
-                                         'placeholder': 'Enter First Name'}))
-    last_name = forms.CharField(max_length=30,
-                                widget=forms.TextInput(
-                                    attrs={
-                                        'class': 'form-control mb-1',
-                                        'placeholder': 'Enter Last Name'}))
-    email = forms.EmailField(max_length=30,
-                             widget=forms.TextInput(
-                                 attrs={
-                                     'class': 'form-control mb-1',
-                                     'placeholder': 'Enter your E-Mail'}))
-    password1 = forms.CharField(max_length=30,
+    password1 = forms.CharField(max_length=30, label="Password",
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'class': 'form-control mb-1',
                                         'placeholder': 'Enter password'}))
-    password2 = forms.CharField(max_length=30,
+    password2 = forms.CharField(max_length=30, label="Repeat password",
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'class': 'form-control mb-1',
@@ -65,8 +49,7 @@ class SignupForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ( 'username', 'first_name', 'last_name',
-                  'email', 'password1', 'password2',)
+        fields = ('username', 'password1', 'password2')
 
 
 class UpdateUserForm(forms.ModelForm):
@@ -76,11 +59,6 @@ class UpdateUserForm(forms.ModelForm):
                                    attrs={
                                        'class': 'form-control mb-1',
                                        'placeholder': 'Username'}))
-    email = forms.EmailField(required=True,
-                             widget=forms.TextInput(
-                                 attrs={
-                                     'class': 'form-control mb-1',
-                                     'placeholder': 'Email'}))
 
     class Meta:
         model = User

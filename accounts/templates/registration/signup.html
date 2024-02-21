@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container min-vh-100 d-flex flex-column align-items-center justify-content-center">
 
-<!--    <h2> Sign Up </h2>-->
     {% if form.errors %}
         <div class="container d-flex align-items-center justify-content-center">
             <div class="alert alert-warning alert-dismissible fade show w-50  d-block" role="alert">
@@ -21,8 +20,7 @@
                 {{ field.label_tag }}
                 </div>
                     <div class="mt-1">
-
-                {{ field }}
+                        {{ field }}
                     </div>
                 {% if field.errors %}
                     <small>{{ field.errors|striptags }}</small>
