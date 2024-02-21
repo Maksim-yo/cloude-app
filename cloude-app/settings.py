@@ -171,3 +171,6 @@ DEFAULT_VIEW_STORAGE_ITEMS_IMG = {
     "pdf": "/media/pdf_image.png",
     "img": "/media/png_image.png"
 }
+
+IS_TEST_MODE = False
+TEST_RUNNER = 'storage.tests.test_runner.CustomTestRunner'

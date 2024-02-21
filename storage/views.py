@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.conf import settings
 
 from storage.FileHandlers import CustomMemoryFileUploadHandler, CustomTemporaryFileUploadHandler
 from storage.forms import FileForm, FolderForm
@@ -182,4 +183,5 @@ def search(request, current_folder_hash: str):
         logging.error(e)
 
 
-config.init_config()
+if not settings.IS_TEST_MODE:
+    config.init_config()
